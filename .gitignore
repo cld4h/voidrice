@@ -25,3 +25,5 @@
 .local/src/
 .pki/
 .ssh
+.gitconfig
+.local/share/lf/
