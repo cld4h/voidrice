@@ -24,6 +24,6 @@
 .local/share/xorg/
 .local/src/
 .pki/
-.ssh
+.ssh/
 .gitconfig
 .local/share/lf/
