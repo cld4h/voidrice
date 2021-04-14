@@ -1,0 +1,2 @@
+#!/bin/sh
+sudo -A /sbin/ip rule add fwmark 1 table 100 ; sudo -A /sbin/ip route add local 0.0.0.0/0 dev lo table 100 ; sudo -A /sbin/iptables-restore /etc/iptables/clash.rules

@@ -1,0 +1,2 @@
+#!/bin/sh
+sudo -A /sbin/ip rule del fwmark 1 table 100 ; sudo -A /sbin/ip route del local 0.0.0.0/0 dev lo table 100 ; sudo -A  /sbin/iptables -t mangle -F ; sudo -A  /sbin/iptables -t nat -F ; sudo -A /sbin/iptables -t nat -X clash ; sudo -A /sbin/iptables -t mangle -X clash ; sudo -A iptables -t nat -X CLASH_DNS ;

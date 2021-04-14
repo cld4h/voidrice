@@ -14,6 +14,8 @@ cmds="\
 ♻ renew dwm	kill -HUP $(pgrep -u $USER "\bdwm$")
 🐻 hibernate	slock ${hib:-systemctl suspend-then-hibernate -i}
 🔃 reboot	${reb:-sudo -A reboot}
+🌍 fuck GFW	fuckgfw
+❎ unfuck GFW	unfuckgfw
 🖥 shutdown	${shut:-sudo -A shutdown -h now}
 📺 display off 	 xset dpms force off"
 
