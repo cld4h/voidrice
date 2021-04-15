@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# The services you want to toggle
+services="openvpn
+openconnect"
+
+chosen="$(echo "$services" | dmenu -i -p "Toggle which service?")" || exit 1
+SERVICE=$chosen
+
+state=$(sudo -A sv check $SERVICE|awk '{print $2}')
+if [ ! -d /run/runit/service/$SERVICE ]
+then
+	echo "not exists, create link"
+	sudo -A ln -s /etc/runit/sv/$SERVICE /run/runit/service/$SERVICE
+else
+	echo "exists"
+fi
+echo $state
+if [ $state = 'run:' ]
+then
+	sudo -A sv stop $SERVICE
+	sudo -A rm -r /run/runit/service/$SERVICE
+fi
