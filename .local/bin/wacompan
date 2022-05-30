@@ -1,0 +1,7 @@
+#!/bin/sh
+
+export DISPLAY=:0
+#export XAUTHORITY=/home/hao/.Xauthority
+
+/usr/bin/xsetwacom set "Wacom One by Wacom S Pen" Button 2 pan
+/usr/bin/xsetwacom set "Wacom One by Wacom S Pen" "PanScrollThreshold" 100
