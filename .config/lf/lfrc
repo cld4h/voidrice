@@ -24,26 +24,28 @@ set period 1
 set hiddenfiles ".*:*.aux:*.log:*.bbl:*.bcf:*.blg:*.run.xml"
 set cleaner '~/.config/lf/cleaner'
 set previewer '~/.config/lf/scope'
+set autoquit true
 
 # cmds/functions
 cmd open ${{
     case $(file --mime-type "$(readlink -f $f)" -b) in
 	application/vnd.openxmlformats-officedocument.spreadsheetml.sheet) localc $fx ;;
 	image/vnd.djvu|application/pdf|application/octet-stream|application/postscript) setsid -f zathura $fx >/dev/null 2>&1 ;;
-        text/*|application/json|inode/x-empty) $EDITOR $fx;;
+        text/*|application/json|inode/x-empty|application/x-subrip) $EDITOR $fx;;
 	image/x-xcf) setsid -f gimp $f >/dev/null 2>&1 ;;
 	image/svg+xml) display -- $f ;;
-	image/*) rotdir $f | grep -i "\.\(png\|jpg\|jpeg\|gif\|webp\|tif\|ico\)\(_large\)*$" |
+	image/*) rotdir $f | grep -i "\.\(png\|jpg\|jpeg\|gif\|webp\|avif\|tif\|ico\)\(_large\)*$" |
 		setsid -f sxiv -aio 2>/dev/null | while read -r file; do
 			[ -z "$file" ] && continue
 			lf -remote "send select \"$file\""
 			lf -remote "send toggle"
 		done &
 		;;
-	audio/*) mpv --audio-display=no $f ;;
+	audio/*|video/x-ms-asf) mpv --audio-display=no $f ;;
 	video/*) setsid -f mpv $f -quiet >/dev/null 2>&1 ;;
-	application/pdf|application/vnd*|application/epub*) setsid -f zathura $fx >/dev/null 2>&1 ;;
+	application/pdf|application/vnd.djvu|application/epub*) setsid -f zathura $fx >/dev/null 2>&1 ;;
 	application/pgp-encrypted) $EDITOR $fx ;;
+	application/vnd.openxmlformats-officedocument.wordprocessingml.document|application/vnd.oasis.opendocument.text|application/vnd.openxmlformats-officedocument.spreadsheetml.sheet|application/octet-stream|application/vnd.oasis.opendocument.spreadsheet|application/vnd.oasis.opendocument.spreadsheet-template|application/vnd.openxmlformats-officedocument.presentationml.presentation|application/vnd.oasis.opendocument.presentation-template|application/vnd.oasis.opendocument.presentation|application/vnd.ms-powerpoint|application/vnd.oasis.opendocument.graphics|application/vnd.oasis.opendocument.graphics-template|application/vnd.oasis.opendocument.formula|application/vnd.oasis.opendocument.database) setsid -f libreoffice $fx >/dev/null 2>&1 ;;
         *) for f in $fx; do setsid -f $OPENER $f >/dev/null 2>&1; done;;
     esac
 }}
@@ -91,7 +93,27 @@ cmd copyto ${{
 }}
 
 cmd setbg "$1"
-cmd bulkrename $vidir
+
+cmd bulkrename ${{
+    tmpfile_old="$(mktemp)"
+    tmpfile_new="$(mktemp)"
+
+    [ -n "$fs" ] && fs=$(basename -a $fs) || fs=$(ls)
+
+    echo "$fs" > "$tmpfile_old"
+    echo "$fs" > "$tmpfile_new"
+    $EDITOR "$tmpfile_new"
+
+    [ "$(wc -l < "$tmpfile_old")" -eq "$(wc -l < "$tmpfile_new")" ] || { rm -f "$tmpfile_old" "$tmpfile_new"; exit 1; }
+
+    paste "$tmpfile_old" "$tmpfile_new" | while IFS="$(printf '\t')" read -r src dst
+    do
+        [ "$src" = "$dst" ] || [ -e "$dst" ] || mv -- "$src" "$dst"
+    done
+
+    rm -f "$tmpfile_old" "$tmpfile_new"
+    lf -remote "send $id unselect"
+}}
 
 # Bindings
 map <c-f> $lf -remote "send $id select \"$(fzf)\""
@@ -108,14 +130,14 @@ map <c-s> set hidden!
 map <enter> shell
 map x $$f
 map X !$f
-map o &mimeopen $f
-map O $mimeopen --ask $f
+map o &mimeopen "$f"
+map O $mimeopen --ask "$f"
 
-map A rename # at the very end
+map A :rename; cmd-end # at the very end
 map c push A<c-u> # new rename
-map I push A<c-a> # at the very beginning
-map i push A<a-b><a-b><a-f> # before extension
-map a push A<a-b> # after extension
+map I :rename; cmd-home # at the very beginning
+map i :rename # before extension
+map a :rename; cmd-right # after extension
 map B bulkrename
 map b $setbg $f
 
