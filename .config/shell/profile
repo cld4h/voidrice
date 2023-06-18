@@ -7,6 +7,8 @@
 
 # Adds `~/.local/bin` to $PATH
 export PATH="$PATH:${$(find ~/.local/bin -type d -printf %p:)%%:}"
+# Adds `~/.local/share/go/bin` to $PATH
+export PATH="$PATH:${$(find ~/.local/share/go/bin -type d -printf %p:)%%:}"
 
 unsetopt PROMPT_SP
 
