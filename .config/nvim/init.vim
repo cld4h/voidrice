@@ -62,11 +62,11 @@ set noshowcmd
     endif
 
 " vimling:
-       nm <leader>d :call ToggleDeadKeys()<CR>
-       imap <leader>d <esc>:call ToggleDeadKeys()<CR>a
-       nm <leader>i :call ToggleIPA()<CR>
-       imap <leader>i <esc>:call ToggleIPA()<CR>a
-       nm <leader>q :call ToggleProse()<CR>
+	nm <leader>d :call ToggleDeadKeys()<CR>
+	imap <leader>d <esc>:call ToggleDeadKeys()<CR>a
+	nm <leader>i :call ToggleIPA()<CR>
+	imap <leader>i <esc>:call ToggleIPA()<CR>a
+	nm <leader>q :call ToggleProse()<CR>
 
 " Shortcutting split navigation, saving a keypress:
 	map <C-h> <C-w>h
@@ -88,10 +88,10 @@ set noshowcmd
 	nnoremap S :%s//g<Left><Left>
 
 " Compile document, be it groff/LaTeX/markdown/etc.
-       map <leader>c :w! \| !compiler "%:p"<CR>
+	map <leader>c :w! \| !compiler "%:p"<CR>
 
 " Open corresponding .pdf/.html or preview
-       map <leader>p :!opout "%:p"<CR>
+	map <leader>p :!opout "%:p"<CR>
 
 " Runs a script that cleans out tex build files whenever I close out of a .tex file.
 	autocmd VimLeave *.tex !texclear %
@@ -105,7 +105,7 @@ set noshowcmd
 	autocmd BufRead,BufNewFile *.tex set filetype=tex
 
 " Save file as sudo on files that require root permission
-       cabbrev w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
+	cabbrev w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
 " Enable Goyo by default for mutt writing
 	autocmd BufRead,BufNewFile /tmp/neomutt* let g:goyo_width=80
@@ -117,9 +117,9 @@ set noshowcmd
  	autocmd BufWritePre * let currPos = getpos(".")
 	autocmd BufWritePre * %s/\s\+$//e
 	autocmd BufWritePre * %s/\n\+\%$//e
-	autocmd BufWritePre * cal cursor(currPos[1], currPos[2])
 	autocmd BufWritePre *.[ch] %s/\%$/\r/e " add trailing newline for ANSI C standard
 	autocmd BufWritePre *neomutt* %s/^--$/-- /e " dash-dash-space signature delimiter in emails
+	autocmd BufWritePre * cal cursor(currPos[1], currPos[2])
 
 " When shortcut files are updated, renew bash and ranger configs with new material:
 	autocmd BufWritePost bm-files,bm-dirs !shortcuts
