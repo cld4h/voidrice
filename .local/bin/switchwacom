@@ -1,0 +1,2 @@
+#!/bin/sh
+/usr/bin/xsetwacom set "Wacom One by Wacom S Pen" MapToOutput next
