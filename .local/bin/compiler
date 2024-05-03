@@ -22,10 +22,18 @@ textype() { \
 	command="pdflatex"
 	( head -n5 "$textarget" | grep -qi 'xelatex' ) && command="xelatex"
 	$command --output-directory="${textarget%/*}" "${textarget%.*}"
-		grep -qi addbibresource "$textarget" &&
+		(grep -qi addbibresource "$textarget") &&
 		biber --input-directory "${textarget%/*}" "${textarget%.*}" &&
+		$command --output-directory="${textarget%/*}" "${textarget%.*}" && return
+		
+		(grep -qi bibliography "$textarget") &&
+		echo "Run bibtex!" &&
+		pushd "${textarget%/*}" &&
+		tbase=${textarget##*/} &&
+		echo "${tbase%.*}" &&
+		bibtex "${tbase%.*}" &&
 		$command --output-directory="${textarget%/*}" "${textarget%.*}" &&
-		$command --output-directory="${textarget%/*}" "${textarget%.*}"
+		popd
 }
 
 case "$ext" in
