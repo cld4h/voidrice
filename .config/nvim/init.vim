@@ -19,7 +19,20 @@ Plug 'vimwiki/vimwiki'
 Plug 'vim-airline/vim-airline'
 Plug 'tpope/vim-commentary'
 Plug 'ap/vim-css-color'
+Plug 'lervag/vimtex'
+Plug 'sirver/ultisnips'
+Plug 'jalvesaq/nvim-r'
 call plug#end()
+
+"https://castel.dev/post/lecture-notes-1/
+let g:tex_flavor='latex'
+let g:vimtex_view_method='zathura'
+let g:vimtex_quickfix_mode=0
+set conceallevel=1
+let g:tex_conceal='abdmg'
+let g:UltiSnipsExpandTrigger = '<tab>'
+let g:UltiSnipsJumpForwardTrigger = '<tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
 
 set title
 set bg=light
@@ -68,11 +81,21 @@ set noshowcmd
 	imap <leader>i <esc>:call ToggleIPA()<CR>a
 	nm <leader>q :call ToggleProse()<CR>
 
+" Insert date
+	nnoremap <F5> "=strftime("%Y-%m-%d")<CR>P
+	inoremap <F5> <C-R>=strftime("%Y-%m-%d")<CR>
+
+
 " Shortcutting split navigation, saving a keypress:
 	map <C-h> <C-w>h
 	map <C-j> <C-w>j
 	map <C-k> <C-w>k
 	map <C-l> <C-w>l
+" resize current buffer by +/- 5 
+	nnoremap <C-left> :vertical resize -1<CR>
+	nnoremap <C-down> :resize +1<CR>
+	nnoremap <C-up> :resize -1<CR>
+	nnoremap <C-right> :vertical resize +1<CR>
 
 " Replace ex mode with gq
 	map Q gq
@@ -97,7 +120,7 @@ set noshowcmd
 	autocmd VimLeave *.tex !texclear %
 
 " Ensure files are read as what I want:
-	let g:vimwiki_ext2syntax = {'.Rmd': 'markdown', '.rmd': 'markdown','.md': 'markdown', '.markdown': 'markdown', '.mdown': 'markdown'}
+	let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.mdown': 'markdown'}
 	map <leader>v :VimwikiIndex<CR>
 	let g:vimwiki_list = [{'path': '~/.local/share/nvim/vimwiki', 'syntax': 'markdown', 'ext': '.md'}]
 	autocmd BufRead,BufNewFile /tmp/calcurse*,~/.calcurse/notes/* set filetype=markdown
@@ -114,12 +137,12 @@ set noshowcmd
 	autocmd BufRead,BufNewFile /tmp/neomutt* map ZQ :Goyo\|q!<CR>
 
 " Automatically deletes all trailing whitespace and newlines at end of file on save. & reset cursor position
- 	autocmd BufWritePre * let currPos = getpos(".")
-	autocmd BufWritePre * %s/\s\+$//e
-	autocmd BufWritePre * %s/\n\+\%$//e
-	autocmd BufWritePre *.[ch] %s/\%$/\r/e " add trailing newline for ANSI C standard
-	autocmd BufWritePre *neomutt* %s/^--$/-- /e " dash-dash-space signature delimiter in emails
-	autocmd BufWritePre * cal cursor(currPos[1], currPos[2])
+" 	autocmd BufWritePre * let currPos = getpos(".")
+"	autocmd BufWritePre * %s/\s\+$//e
+"	autocmd BufWritePre * %s/\n\+\%$//e
+"	autocmd BufWritePre *.[ch] %s/\%$/\r/e " add trailing newline for ANSI C standard
+"	autocmd BufWritePre *neomutt* %s/^--$/-- /e " dash-dash-space signature delimiter in emails
+"	autocmd BufWritePre * cal cursor(currPos[1], currPos[2])
 
 " When shortcut files are updated, renew bash and ranger configs with new material:
 	autocmd BufWritePost bm-files,bm-dirs !shortcuts
@@ -157,3 +180,12 @@ nnoremap <leader>h :call ToggleHiddenAll()<CR>
 " So ":vs ;cfz" will expand into ":vs /home/<user>/.config/zsh/.zshrc"
 " if typed fast without the timeout.
 silent! source ~/.config/nvim/shortcuts.vim
+
+" Config for Nvim-R
+" Do not open browser automaticly
+let R_openhtml = 0
+let R_openpdf = 0
+autocmd BufRead,BufNewFile *.Rmd set filetype=rmd
+autocmd BufRead,BufNewFile *.Rmd so $VIMRUNTIME/syntax/tex.vim
+let R_assign = 0
+let R_assign_map = "+"
